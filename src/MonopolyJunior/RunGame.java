@@ -42,83 +42,120 @@ import java.util.Vector;
             return nameVal;
         }
         private static int playerAge() {
+            System.out.println("How old are you? ");
+
             Scanner age = new Scanner(System.in);
+
             int ageVal = age.nextInt();
+
             return ageVal;
         }
 
-        private static void inputPlayerNames() {
-            System.out.println("rules for DiceGame: \n"
-                    + "1. You start with 1000 points, when you hit 3000 points, you will win the game\n"
-                    + "2. If you land on the Werewall, you'll get an extra turn \n");
 
-            int amountPlayer;
+        private static int getPlayerCount() {
+            System.out.println("How many players are playing? ");
 
-            System.out.println("How many players are playing?");
-            Scanner amount = new Scanner(System.in);
+            Scanner amountScanner = new Scanner(System.in);
+
+            int playerCount = 0;
 
             while (true) {
-                amountPlayer = amount.nextInt();
+                playerCount = amountScanner.nextInt();
 
-                if (amountPlayer < 2) {
+                if(playerCount < 2) {
                     System.out.println("You are not enough players.");
-                } else if (amountPlayer > 4) {
-                    System.out.println("You are too many players");
-                } else {
-                    System.out.println(amountPlayer + " players are playing.");
-                    break;
+                }  else if (playerCount > 4) {
+                    System.out.println("you are too many players");
+                }  else {
+                    System.out.println(playerCount + " players are playing.");
+                    return playerCount;
                 }
             }
+        }
 
-            for (int i = 0; i < amountPlayer; i++) {
-                System.out.println("What is your name?");
-                playerName();
-                System.out.print(playerName());
+        private static int calcStartAmount(int playerCount) {
+            int startAmount = 0;
 
+            switch(playerCount){
+                case 2:
+                    startAmount = 20;
+                    break;
 
-                System.out.println(", how old are you?");
-                playerAge();
-                System.out.println(playerName() + " is " + playerAge() + " years old.");
-                players.add(new Player(startvalue, playerName(), playerAge()));
+                case 3:
+                    startAmount = 18;
+                    break;
+                default:
+                    startAmount = 16;
+                    break;
             }
-
-            if (amountPlayer == 2) {
-               Balance.startvalue(startvalue = 20);
-                System.out.println("each player starts with: " + startvalue);
-            } else if (amountPlayer == 3) {
-                int startvalue = 18;
-                System.out.println("each player starts with: " + startvalue);
-            } else {
-                int startvalue = 16;
-                System.out.println("each player starts with: " + startvalue);
-            }
+            System.out.println("each player start with: " + startAmount);
+            return startAmount;
         }
 
 
+        private static void setupGame(){
+            System.out.println("rule for our Monopoly Junior game: \n");
+            int playerCount = getPlayerCount();
+            int startAmount = calcStartAmount(playerCount);
 
+            for (int i = 0; i < playerCount; i++) {
 
-        private static void doTurn(){ // used from CDIO1, with changes.
-            do {
-                System.out.println(currentPlayer.getName() + " press 'K' if you're ready to throw");
-                sc.next(); // asks if theyre ready to throw, by pressing K they Throw.
+                Player player = new Player(playerName(), playerAge(), new Balance(startAmount));
 
-                currentPlayer.roll(); // player rolls the dices.
-                updateBalance(currentPlayer); // the balance for the player updates
-                fieldName(currentPlayer); // fieldName gets saved.
-                System.out.println(currentPlayer.getName() + " rolls: " + currentPlayer.getFaceValue());
+                System.out.println(player.getName() + " is " + player.getAge() + " years old. ");
 
-                System.out.println("you landed on field: " + currentPlayer.getLocation() + ", " + (fieldName(currentPlayer)) +
-                        ", with the value of: " + fieldValue(currentPlayer));
-                System.out.println("your balance is: " + currentPlayer.getBalance());
-
-
-            } while (!currentPlayer.isGameDone()); //the loop goes on if someone gets an extra
-            // or the players have hit the estimated value to finish the game.
+                 players.add(player);
+            }
         }
+
+        private void handleSpecielEvent(Player currentPlayer) {
+            if(currentPlayer.isInJail()){
+                currentPlayer.payFine(100);
+                //Value need to be present somewhere.. not as shown here.
+            }
+        }
+        private void handleField(Player currentPlayer) {
+            IField f = b.getField(currentPlayer.getLocation());
+            
+            f.handlePlayer(currentPlayer);
+        }
+
+        private void printOutFieldInfo(Player currentPlayer){
+            System.out.println(currentPlayer.getName() + " rolls: " + currentPlayer.getFaceValue());
+
+            System.out.println("You landed on field:  " + currentPlayer.getLocation() + ", " + fieldName(currentPlayer));
+        }
+
+        private void doTurn(Player currentPlayer) {
+            //used from CDIO1, with changes.
+           do {
+               System.out.println(currentPlayer.getName() + " press 'K' if you are ready to throw");
+               sc.next(); // ask if theyre ready to throw, by pressing K they throw.
+
+               handleSpecielEvent(currentPlayer);  // In jail or stuff like that
+               currentPlayer.roll(); // player rolls the dice
+               printOutFieldInfo(currentPlayer);
+               handleField(currentPlayer);
+
+               /*
+               updateBalance(currentPlayer); // the balance for the player updates
+               fieldName(currentPlayer); // fieldName gets saved.
+               System.out.println(currentPlayer.getName() + " rolls: " + currentPlayer.getFaceValue());
+               System.out.println("you landed on field: " + currentPlayer.getLocation() + ", " +
+               (fieldName(currentPlayer)) + ", with the value of: " fieldValue(currentPlayer));
+               System.out.println("your balance is: " + currentPlayer.getBalance());
+                */
+
+            } while (!currentPlayer.isGameDone()); // the loop continues until a player hit the estimated value
+        }
+
+
+        
 
         private static void playGame() { // used from cdio 1, with changes.
             int round = 1; // sets start round to 1.
 
+            /*
             while ((!p1.isGameDone()) && !(p2.isGameDone())) {
                 System.out.println("Round: " + round);
                 round++; // whenever a new turn starts, the round gets ++.
@@ -145,10 +182,12 @@ import java.util.Vector;
                 p2.incGamesWon();
                 System.out.println(p2.getName() + " games won : " + p2.getGamesWon());
             }
+
+             */
         }
 
         private static void newGame() { // Used from cdio1, but with changes.
-            inputPlayerNames();
+            setupGame();
             String another = "y";
 
             while (another.equalsIgnoreCase("y")) { // asks if they want to play again
@@ -158,8 +197,8 @@ import java.util.Vector;
                 System.out.println("would you like to play again? (y/n)");
                 another = sc.next();
 
-                p1.newGame();
-                p2.newGame();
+                players.clear();
+
             }
 
         }

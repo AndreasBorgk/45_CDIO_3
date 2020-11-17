@@ -8,7 +8,7 @@ public class GoToJail extends IField {
         super(name);
         this.jailLocation = jailLocation;
         this.fine = fine;
-        owner = null;
+        //owner = null;
     }
 
 
