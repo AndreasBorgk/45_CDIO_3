@@ -2,9 +2,16 @@ package MonopolyJunior;
 
 public class Balance {
     private int value;
+    private int defaultValue;
+
+    public Balance(int value) {
+        this.value = value;
+        this.defaultValue = value;
+    }
 
     public Balance()
     {
+        defaultValue = 0;
         reset();
     }
 
@@ -18,6 +25,6 @@ public class Balance {
     }
 
     public void reset(){
-        value = 20;
+        value = defaultValue;
     }
 }

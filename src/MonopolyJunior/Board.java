@@ -13,7 +13,7 @@ public class Board {
         fields.add(new Field("Chance Kort",0));
         fields.add(new Field("Slikbutikken",1));
         fields.add(new Field("Iskiosken",1));
-        fields.add(new Field("Fængslet",0));
+        fields.add(new Field("På besøg",0));
         fields.add(new Field("Museet",2));
         fields.add(new Field("Biblioteket",2));
         fields.add(new Field("Chance kort",0));
