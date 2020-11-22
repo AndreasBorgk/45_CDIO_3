@@ -1,12 +1,14 @@
 package MonopolyJunior;
 
+import com.sun.java.accessibility.util.GUIInitializedListener;
+
 import java.util.Scanner;
 import java.util.Vector;
 
     class Main {
 
         private static Vector<Player> players;
-        private static Board b = new Board();
+        static GUI gui = new GUI(b.getFields());
         static Scanner sc = new Scanner(System.in);
 
 
@@ -14,22 +16,23 @@ import java.util.Vector;
         private static void updateBalance(Player currentPlayer) // function to update the current
         // Players balance given the vectors field value.
         {
-            Field f = b.getField(currentPlayer.getLocation());
-            //currentPlayer.updateBalance(f.value);
+            GUI_Street f = (GUI_Street) b.getField(currentPlayer.getLocation());
+            int rent = Integer.parseInt(f.getRent());
+            currentPlayer.updateBalance(rent);
         }
 
         private static String fieldName(Player currentPlayer) // prints out the given locations
         // fieldname for the current player
         {
-            Field f = b.getField(currentPlayer.getLocation());
-            return f.name;
+            return b.getField(currentPlayer.getLocation()).getTitle();
         }
 
         private static int fieldValue(Player currentPlayer)
         // prints out the fieldValue for the current location.
         {
-            Field f = b.getField(currentPlayer.getLocation());
-            return f.value;
+            GUI_Street f = (GUI_Street) b.getField(currentPlayer.getLocation());
+            int rent = Integer.parseInt(f.getRent());
+            return rent;
         }
 
         private static String playerName() {
